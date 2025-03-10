@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Мой Тамагочи</title>
+    <script src="pixi.min.js"></script>
+    <style>
+        body { margin: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; }
+        button { margin: 10px; padding: 10px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div id="game"></div>
+    <button onclick="feedPet()">Кормить</button>
+    <button onclick="playPet()">Играть</button>
+    <script>
+        const app = new PIXI.Application({ width: 300, height: 300, backgroundColor: 0x87CEEB });
+        document.getElementById("game").appendChild(app.view);
+
+        const pet = PIXI.Sprite.from("pet.png");
+        pet.width = 50;
+        pet.height = 50;
+        pet.x = 125;
+        pet.y = 125;
+        app.stage.addChild(pet);
+
+        let hunger = 50;
+        let happiness = 50;
+
+        app.ticker.add(() => {
+            pet.x += 1;
+            if (pet.x > 250) pet.x = 0;
+
+            // Уменьшаем голод и счастье каждые 2 секунды
+            if (app.ticker.lastTime % 2000 < app.ticker.deltaMS) {
+                hunger = Math.max(0, hunger - 1);
+                happiness = Math.max(0, happiness - 1);
+                console.log("Голод:", hunger, "Счастье:", happiness);
+
+                // Реакция питомца
+                if (hunger < 30 || happiness < 30) {
+                    pet.tint = 0xFF9999; // Красноватый, если грустно или голодно
+                } else {
+                    pet.tint = 0xFFFFFF; // Нормальный цвет
+                }
+            }
+        });
+
+        function feedPet() {
+            hunger = Math.min(100, hunger + 20);
+            console.log("Покормили! Голод:", hunger);
+        }
+
+        function playPet() {
+            happiness = Math.min(100, happiness + 20);
+            console.log("Поиграли! Счастье:", happiness);
+        }
+    </script>
+</body>
+</html>
